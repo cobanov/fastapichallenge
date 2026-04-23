@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Item Manager</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #e0e7ff;
+            --success: #10b981;
+            --success-light: #d1fae5;
+            --danger: #ef4444;
+            --danger-light: #fee2e2;
+            --warning: #f59e0b;
+            --warning-light: #fef3c7;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            --radius: 12px;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+            background: var(--gray-100);
+            color: var(--gray-800);
+            min-height: 100vh;
+        }
+
+        /* Login Page */
+        .login-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 1rem;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: var(--shadow-xl);
+            animation: slideUp 0.4s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .login-logo {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary), #8b5cf6);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        .login-card h1 {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+        }
+
+        .login-card p {
+            text-align: center;
+            color: var(--gray-500);
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 0.4rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.7rem 0.9rem;
+            border: 1.5px solid var(--gray-200);
+            border-radius: 10px;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            outline: none;
+            background: var(--gray-50);
+        }
+
+        .form-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+            background: white;
+        }
+
+        .form-group { margin-bottom: 1rem; }
+
+        .btn {
+            padding: 0.65rem 1.2rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .btn:active { transform: scale(0.97); }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        .btn-primary:hover { background: var(--primary-dark); }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+        .btn-success:hover { background: #059669; }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+        .btn-danger:hover { background: #dc2626; }
+
+        .btn-outline {
+            background: white;
+            color: var(--gray-700);
+            border: 1.5px solid var(--gray-200);
+        }
+        .btn-outline:hover {
+            background: var(--gray-50);
+            border-color: var(--gray-300);
+        }
+
+        .btn-full { width: 100%; justify-content: center; }
+
+        /* Navbar */
+        .navbar {
+            background: white;
+            border-bottom: 1px solid var(--gray-200);
+            padding: 0 2rem;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            font-weight: 700;
+            font-size: 1.15rem;
+            color: var(--gray-900);
+        }
+
+        .navbar-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary), #8b5cf6);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .navbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 0.8rem;
+            background: var(--gray-50);
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: var(--gray-600);
+        }
+
+        .user-avatar {
+            width: 28px;
+            height: 28px;
+            background: var(--primary-light);
+            color: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.75rem;
+        }
+
+        /* Main Layout */
+        .main { max-width: 1100px; margin: 0 auto; padding: 1.5rem; }
+
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .stat-value.success { color: var(--success); }
+        .stat-value.danger { color: var(--danger); }
+        .stat-value.primary { color: var(--primary); }
+
+        /* Card */
+        .card {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--gray-100);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .search-box {
+            position: relative;
+            width: 280px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.55rem 0.9rem 0.55rem 2.4rem;
+            border: 1.5px solid var(--gray-200);
+            border-radius: 10px;
+            font-size: 0.88rem;
+            outline: none;
+            transition: all 0.2s;
+            background: var(--gray-50);
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+            background: white;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.8rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-400);
+            pointer-events: none;
+        }
+
+        /* Table */
+        .table-wrap { overflow-x: auto; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            padding: 0.85rem 1.5rem;
+            text-align: left;
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--gray-500);
+            background: var(--gray-50);
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        td {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--gray-100);
+            font-size: 0.92rem;
+        }
+
+        tr:last-child td { border-bottom: none; }
+
+        tbody tr { transition: background 0.15s; }
+        tbody tr:hover { background: var(--gray-50); }
+
+        .item-name {
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .item-price {
+            font-weight: 600;
+            color: var(--gray-700);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.3rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+
+        .badge-success { background: var(--success-light); color: #065f46; }
+        .badge-danger { background: var(--danger-light); color: #991b1b; }
+
+        .badge-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        .badge-success .badge-dot { background: var(--success); }
+        .badge-danger .badge-dot { background: var(--danger); }
+
+        .actions { display: flex; gap: 0.5rem; }
+
+        .btn-sm {
+            padding: 0.4rem 0.75rem;
+            font-size: 0.82rem;
+            border-radius: 8px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--gray-400);
+        }
+
+        .empty-state-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .empty-state-text { font-size: 0.95rem; }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 1rem;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal {
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 460px;
+            box-shadow: var(--shadow-xl);
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .modal-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--gray-100);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: var(--gray-100);
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray-500);
+            font-size: 1.1rem;
+            transition: all 0.15s;
+        }
+
+        .modal-close:hover { background: var(--gray-200); color: var(--gray-700); }
+
+        .modal-body { padding: 1.5rem; }
+
+        .modal-body .form-group { margin-bottom: 1.1rem; }
+
+        .modal-body .form-input {
+            background: white;
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--gray-100);
+            display: flex;
+            gap: 0.75rem;
+            justify-content: flex-end;
+        }
+
+        /* Toast */
+        .toast-container {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .toast {
+            padding: 0.8rem 1.2rem;
+            border-radius: 10px;
+            color: white;
+            font-size: 0.88rem;
+            font-weight: 500;
+            box-shadow: var(--shadow-lg);
+            animation: slideIn 0.3s ease-out;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .toast-success { background: var(--success); }
+        .toast-error { background: var(--danger); }
+
+        .hidden { display: none !important; }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .navbar { padding: 0 1rem; }
+            .main { padding: 1rem; }
+            .card-header { padding: 1rem; }
+            th, td { padding: 0.75rem 1rem; }
+            .search-box { width: 100%; }
+            .stats { grid-template-columns: repeat(3, 1fr); }
+            .stat-card { padding: 1rem; }
+            .stat-value { font-size: 1.3rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Login Page -->
+    <div id="authPage" class="login-page">
+        <div class="login-card">
+            <div class="login-logo">&#x1f4e6;</div>
+            <h1>Welcome Back</h1>
+            <p>Sign in to manage your inventory</p>
+            <div class="form-group">
+                <label class="form-label">Username</label>
+                <input class="form-input" type="text" id="username" placeholder="Enter username" autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input class="form-input" type="password" id="password" placeholder="Enter password">
+            </div>
+            <button class="btn btn-primary btn-full" onclick="login()" style="margin-top:0.5rem;">Sign In</button>
+        </div>
+    </div>
+
+    <!-- App Page -->
+    <div id="appPage" class="hidden">
+        <nav class="navbar">
+            <div class="navbar-brand">
+                <div class="navbar-icon">&#x1f4e6;</div>
+                <span>Item Manager</span>
+            </div>
+            <div class="navbar-actions">
+                <div class="user-badge">
+                    <div class="user-avatar" id="userAvatar"></div>
+                    <span id="userDisplay"></span>
+                </div>
+                <button class="btn btn-outline btn-sm" onclick="logout()">Sign Out</button>
+            </div>
+        </nav>
+
+        <div class="main">
+            <!-- Stats -->
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-label">Total Items</div>
+                    <div class="stat-value primary" id="statTotal">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">In Stock</div>
+                    <div class="stat-value success" id="statInStock">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Out of Stock</div>
+                    <div class="stat-value danger" id="statOutOfStock">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total Value</div>
+                    <div class="stat-value" id="statValue">$0</div>
+                </div>
+            </div>
+
+            <!-- Items Table -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Inventory</div>
+                    <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;">
+                        <div class="search-box">
+                            <span class="search-icon">&#x1f50d;</span>
+                            <input type="text" id="searchInput" placeholder="Search items..." oninput="handleSearch()">
+                        </div>
+                        <button class="btn btn-success btn-sm" onclick="openModal()">+ Add Item</button>
+                    </div>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Price</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="itemsTable"></tbody>
+                    </table>
+                </div>
+                <div id="emptyState" class="empty-state hidden">
+                    <div class="empty-state-icon">&#x1f4e6;</div>
+                    <div class="empty-state-text">No items found</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="modalOverlay" class="modal-overlay hidden" onclick="closeModalOutside(event)">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modalTitle">Add Item</div>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Name</label>
+                    <input class="form-input" type="text" id="itemName" placeholder="Item name">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Price</label>
+                    <input class="form-input" type="number" id="itemPrice" step="0.01" min="0" placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Stock Status</label>
+                    <select class="form-input" id="itemStock">
+                        <option value="true">In Stock</option>
+                        <option value="false">Out of Stock</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" id="modalSaveBtn" onclick="saveItem()">Save Item</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        const API = window.location.origin;
+        let credentials = null;
+        let allItems = [];
+        let editingId = null;
+
+        function authHeader() {
+            return { 'Authorization': 'Basic ' + btoa(`${credentials.username}:${credentials.password}`) };
+        }
+
+        async function login() {
+            const u = document.getElementById('username').value.trim();
+            const p = document.getElementById('password').value;
+            if (!u || !p) { toast('Please fill in all fields', 'error'); return; }
+            credentials = { username: u, password: p };
+            try {
+                const res = await fetch(`${API}/items/`, { headers: authHeader() });
+                if (res.ok) {
+                    document.getElementById('authPage').classList.add('hidden');
+                    document.getElementById('appPage').classList.remove('hidden');
+                    document.getElementById('userDisplay').textContent = u;
+                    document.getElementById('userAvatar').textContent = u.charAt(0).toUpperCase();
+                    loadItems();
+                } else {
+                    credentials = null;
+                    toast('Invalid credentials', 'error');
+                }
+            } catch {
+                credentials = null;
+                toast('Connection failed', 'error');
+            }
+        }
+
+        function logout() {
+            credentials = null;
+            allItems = [];
+            document.getElementById('appPage').classList.add('hidden');
+            document.getElementById('authPage').classList.remove('hidden');
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+        }
+
+        async function loadItems() {
+            try {
+                const res = await fetch(`${API}/items/`, { headers: authHeader() });
+                allItems = await res.json();
+                updateStats();
+                renderItems(allItems);
+            } catch {
+                toast('Failed to load items', 'error');
+            }
+        }
+
+        function updateStats() {
+            const total = allItems.length;
+            const inStock = allItems.filter(i => i.in_stock).length;
+            const outOfStock = total - inStock;
+            const totalValue = allItems.reduce((sum, i) => sum + i.price, 0);
+            document.getElementById('statTotal').textContent = total;
+            document.getElementById('statInStock').textContent = inStock;
+            document.getElementById('statOutOfStock').textContent = outOfStock;
+            document.getElementById('statValue').textContent = '$' + totalValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function renderItems(items) {
+            const tbody = document.getElementById('itemsTable');
+            const empty = document.getElementById('emptyState');
+            if (items.length === 0) {
+                tbody.innerHTML = '';
+                empty.classList.remove('hidden');
+                return;
+            }
+            empty.classList.add('hidden');
+            tbody.innerHTML = items.map(i => `
+                <tr>
+                    <td style="color:var(--gray-400);font-size:0.85rem;">#${i.id}</td>
+                    <td class="item-name">${esc(i.name)}</td>
+                    <td class="item-price">$${i.price.toFixed(2)}</td>
+                    <td>
+                        <span class="badge ${i.in_stock ? 'badge-success' : 'badge-danger'}">
+                            <span class="badge-dot"></span>
+                            ${i.in_stock ? 'In Stock' : 'Out of Stock'}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="actions">
+                            <button class="btn btn-outline btn-sm" onclick="editItem(${i.id})">Edit</button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteItem(${i.id})">Delete</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function esc(str) {
+            const d = document.createElement('div');
+            d.textContent = str;
+            return d.innerHTML;
+        }
+
+        function handleSearch() {
+            const q = document.getElementById('searchInput').value.toLowerCase().trim();
+            if (!q) { renderItems(allItems); return; }
+            renderItems(allItems.filter(i => i.name.toLowerCase().includes(q)));
+        }
+
+        function openModal(id = null) {
+            editingId = id;
+            document.getElementById('modalTitle').textContent = id ? 'Edit Item' : 'Add Item';
+            document.getElementById('modalSaveBtn').textContent = id ? 'Update' : 'Save Item';
+            if (!id) {
+                document.getElementById('itemName').value = '';
+                document.getElementById('itemPrice').value = '';
+                document.getElementById('itemStock').value = 'true';
+            }
+            document.getElementById('modalOverlay').classList.remove('hidden');
+            setTimeout(() => document.getElementById('itemName').focus(), 100);
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.add('hidden');
+            editingId = null;
+        }
+
+        function closeModalOutside(e) {
+            if (e.target === document.getElementById('modalOverlay')) closeModal();
+        }
+
+        async function editItem(id) {
+            try {
+                const res = await fetch(`${API}/items/${id}`, { headers: authHeader() });
+                const item = await res.json();
+                openModal(id);
+                document.getElementById('itemName').value = item.name;
+                document.getElementById('itemPrice').value = item.price;
+                document.getElementById('itemStock').value = String(item.in_stock);
+            } catch {
+                toast('Failed to load item', 'error');
+            }
+        }
+
+        async function saveItem() {
+            const name = document.getElementById('itemName').value.trim();
+            const price = parseFloat(document.getElementById('itemPrice').value);
+            const in_stock = document.getElementById('itemStock').value === 'true';
+            if (!name || isNaN(price) || price < 0) { toast('Please fill in all fields correctly', 'error'); return; }
+            try {
+                const url = editingId ? `${API}/items/${editingId}` : `${API}/items/`;
+                const method = editingId ? 'PUT' : 'POST';
+                const res = await fetch(url, {
+                    method,
+                    headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, price, in_stock })
+                });
+                if (res.ok) {
+                    toast(editingId ? 'Item updated' : 'Item created', 'success');
+                    closeModal();
+                    loadItems();
+                } else {
+                    toast('Save failed', 'error');
+                }
+            } catch {
+                toast('Save failed', 'error');
+            }
+        }
+
+        async function deleteItem(id) {
+            if (!confirm('Are you sure you want to delete this item?')) return;
+            try {
+                const res = await fetch(`${API}/items/${id}`, { method: 'DELETE', headers: authHeader() });
+                if (res.ok) {
+                    toast('Item deleted', 'success');
+                    loadItems();
+                } else {
+                    toast('Delete failed', 'error');
+                }
+            } catch {
+                toast('Delete failed', 'error');
+            }
+        }
+
+        function toast(msg, type) {
+            const container = document.getElementById('toastContainer');
+            const el = document.createElement('div');
+            el.className = `toast toast-${type}`;
+            el.innerHTML = `<span>${type === 'success' ? '&#x2705;' : '&#x274c;'}</span> ${msg}`;
+            container.appendChild(el);
+            setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity 0.3s'; setTimeout(() => el.remove(), 300); }, 3000);
+        }
+
+        // Enter key support on login
+        document.getElementById('password').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+        document.getElementById('username').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('password').focus(); });
+
+        // Enter key support in modal
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
