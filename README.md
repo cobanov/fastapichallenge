@@ -4,7 +4,7 @@ The same small **FastAPI** project is kept in three folders to compare different
 
 ## `tasks.md` (the challenge brief)
 
-Each app folder is meant to be produced from a **single spec**: the **`tasks.md`** file (requirements, API shape, tests, and UI expectations). You hand that file to an open-weights model and ask it to **implement the project**; this repo’s three copies are different models’ **responses to the same `tasks.md`**. Use your workflow (e.g. LM Studio + OpenCode) to run the model against that spec and build out the code.
+The specification is [**tasks.md**](tasks.md) at the repo root (same brief as in each app folder). You hand that file to an open-weights model and ask it to **implement the project**; the three `fastapiexample-*` directories are different models’ **responses to the same spec**. Use your workflow (e.g. LM Studio + OpenCode) to run the model against that file and build out the code.
 
 | Folder | Model (challenge run) |
 |--------|------------------------|
